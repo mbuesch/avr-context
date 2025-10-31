@@ -139,10 +139,10 @@ impl<'cs> MainCtx<'cs> {
     ///
     /// Interrupts must be disabled while calling this function.
     #[inline(always)]
-    pub unsafe fn new_with_init<'a, F: FnOnce(&'a InitCtx)>(f: F) -> Self {
+    pub unsafe fn new_with_init<'a, A, F: FnOnce(&'a InitCtx, A)>(f: F, arg: A) -> Self {
         // SAFETY: We are creating the MainCtx.
         // Therefore, it's safe to construct the InitCtx marker.
-        f(&InitCtx(()));
+        f(&InitCtx(()), arg);
 
         // SAFETY: The safety contract of the called function is equal to ours.
         unsafe { MainCtx::new() }
