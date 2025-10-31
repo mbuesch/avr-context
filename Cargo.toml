@@ -1,0 +1,21 @@
+[package]
+name = "avr-context"
+description = "Static checking of execution context - IRQ vs. main()"
+version = "1.0.0"
+authors = [ "Michael Büsch <m@bues.ch>" ]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+homepage = "https://bues.ch/"
+repository = "https://github.com/mbuesch/avr-context"
+readme = "README.md"
+categories = [ "embedded", "hardware-support", "no-std" ]
+keywords = [ "avr" ]
+
+[dependencies]
+bare-metal = "1"
+
+[features]
+default = [ ]
+
+[lints.clippy]
+undocumented_unsafe_blocks = "warn"
