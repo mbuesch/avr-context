@@ -224,8 +224,37 @@ impl<'cs> MainCtx<'cs> {
 ///
 /// # Move peripherals into static variables
 ///
-/// ```
-/// //TODO
+/// ```ignore
+/// use avr_context::{InitCtx, MainCtx, define_main};
+///
+/// struct MainPeripherals { }
+///
+/// fn my_portb_function() {
+///     interrupt::free(|cs| {
+///         let portb = DP_PORTB.as_ref_with_cs(cs);
+///         // ...
+///     });
+/// }
+///
+/// fn my_main_function(c: &MainCtx<'_>, dp: MainPeripherals) -> ! {
+///     loop { /* ... */ }
+/// }
+///
+/// struct InitPeripherals { }
+///
+/// fn my_init_function(c: &InitCtx<'_>, dp: InitPeripherals) -> MainPeripherals {
+///     MainPeripherals { /* ... */ }
+/// }
+///
+/// define_main! {
+///     device: atmega328p,
+///     main: my_main_function,
+///     enable_interrupts: true,
+///     init: my_init_function(ctx, InitPeripherals { }) -> MainPeripherals,
+///     static_peripherals: {
+///         static DP_PORTB: PORTB,
+///     },
+/// }
 /// ```
 #[macro_export]
 macro_rules! define_main {

@@ -18,6 +18,8 @@ use core::{
 pub struct InitCtxCell<T>(UnsafeCell<MaybeUninit<T>>);
 
 impl<T> InitCtxCell<T> {
+    /// Get an uninitialized instance of [InitCtxCell].
+    ///
     /// # SAFETY
     ///
     /// It must be ensured that the returned instance is initialized
@@ -37,6 +39,9 @@ impl<T> InitCtxCell<T> {
         Self(UnsafeCell::new(MaybeUninit::uninit()))
     }
 
+    /// Initialize the cell with `inner` data and return a reference to it.
+    ///
+    /// This must be called *once* during construction of the [MainCtx] to initialize the cell.
     #[inline(always)]
     pub fn init<'ctx>(&self, _: &'ctx InitCtx, inner: T) -> &'ctx T {
         // SAFETY:
@@ -56,26 +61,30 @@ impl<T> InitCtxCell<T> {
         unsafe { (*self.0.get()).assume_init_ref() }
     }
 
+    /// Get a reference to the inner data with the given critical section.
     #[inline(always)]
-    pub fn cs<'cs>(&self, _: CriticalSection<'cs>) -> &'cs T {
+    pub fn as_ref_with_cs<'cs>(&self, _: CriticalSection<'cs>) -> &'cs T {
         // SAFETY:
         // The [Self::uninit] safety contract ensures that [Self::init] is called before us.
         // That ensures that the inner field is initialized.
         unsafe { (*self.0.get()).assume_init_ref() }
     }
 
+    /// Get a reference to the inner data from an initialization context `InitCtx`.
     #[inline(always)]
-    pub fn initctx<'ctx>(&self, c: &'ctx InitCtx) -> &'ctx T {
-        self.cs(c.cs())
+    pub fn as_ref_with_initctx<'ctx>(&self, c: &'ctx InitCtx) -> &'ctx T {
+        self.as_ref_with_cs(c.cs())
     }
 
+    /// Get a reference to the inner data from an interrupt context `IrqCtx`.
     #[inline(always)]
-    pub fn irqctx<'ctx>(&self, c: &'ctx IrqCtx) -> &'ctx T {
-        self.cs(c.cs())
+    pub fn as_ref_with_irqctx<'ctx>(&self, c: &'ctx IrqCtx) -> &'ctx T {
+        self.as_ref_with_cs(c.cs())
     }
 }
 
 impl<T> Drop for InitCtxCell<T> {
+    #[inline(always)]
     fn drop(&mut self) {
         // SAFETY:
         // The [Self::uninit] safety contract ensures that [Self::init] is called before us.
@@ -105,6 +114,7 @@ pub struct MainCtxCell<T> {
 }
 
 impl<T> MainCtxCell<T> {
+    /// Create a new `MainCtxCell` with the given initial value.
     #[inline(always)]
     pub const fn new(inner: T) -> Self {
         Self {
@@ -112,28 +122,32 @@ impl<T> MainCtxCell<T> {
         }
     }
 
+    /// Replace the inner value with `inner` and return the old value.
     #[inline(always)]
     pub fn replace(&self, m: &MainCtx<'_>, inner: T) -> T {
         // SAFETY: We only use the cs for the main context, where it is allowed to be used.
         self.inner.borrow(unsafe { m.cs() }).replace(inner)
     }
 
+    /// Get a reference to the inner data from a main context `MainCtx`.
     #[inline(always)]
     pub fn as_ref<'cs>(&self, m: &MainCtx<'cs>) -> &'cs T {
         // SAFETY: The returned reference is bound to the
-        //         lifetime of the CriticalSection.
-        //         We only use the cs for the main context, where it is allowed to be used.
+        // lifetime of the CriticalSection.
+        // We only use the cs for the main context, where it is allowed to be used.
         unsafe { &*self.inner.borrow(m.cs()).as_ptr() as _ }
     }
 }
 
 impl<T: Copy> MainCtxCell<T> {
+    /// Get a copy of the inner data from a main context `MainCtx`.
     #[inline(always)]
     pub fn get(&self, m: &MainCtx<'_>) -> T {
         // SAFETY: We only use the cs for the main context, where it is allowed to be used.
         self.inner.borrow(unsafe { m.cs() }).get()
     }
 
+    /// Set the inner data from a main context `MainCtx`.
     #[inline(always)]
     pub fn set(&self, m: &MainCtx<'_>, inner: T) {
         // SAFETY: We only use the cs for the main context, where it is allowed to be used.

@@ -151,7 +151,7 @@ mod test {
 
             assert_eq!(core::mem::size_of_val(&INIT_CELL), 2);
             INIT_CELL.init(ctx, 14);
-            assert_eq!(*INIT_CELL.initctx(ctx), 14);
+            assert_eq!(*INIT_CELL.as_ref_with_initctx(ctx), 14);
 
             let init_cell_zst: InitCtxCell<()> = unsafe { InitCtxCell::uninit() };
             assert_eq!(core::mem::size_of_val(&init_cell_zst), 0);
