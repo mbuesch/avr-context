@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 // SPDX-License-Identifier: Apache-2.0 OR MIT
-// Copyright (C) 2025 Michael Büsch <m@bues.ch>
+// Copyright (C) 2025 - 2026 Michael Büsch <m@bues.ch>
 
 //! Cell container types.
 
@@ -48,7 +48,7 @@ impl<T> InitCtxCell<T> {
         // then this is a (safe) memory leak. :-/
         //
         // This function can only be called from single threaded `InitCtx`
-        // with interrupts disabled. The `_m` argument ensures that.
+        // with interrupts disabled. The `InitCtx` argument ensures that.
         // Therefore, we can overwrite the cell without data races.
         unsafe { *self.0.get() = MaybeUninit::new(inner) };
 

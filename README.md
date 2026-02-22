@@ -6,14 +6,14 @@ It helps to safely manage access to data from different execution contexts, such
 The main goal is to provide a zero-cost or minimal-cost abstraction for safe and minimal overhead data access.
 The exclusive access of data from the main loop is zero-cost.
 
-This crate is built upon `Mutex` and `CriticalSection` from the `bare-metal` and `avr-device` crates.
+This crate is built upon `Mutex` and `CriticalSection` from the [bare-metal](https://crates.io/crates/bare-metal) and [avr-device](https://crates.io/crates/avr-device) crates.
 
 ## Contexts
 
 The crate defines three context markers:
 
 - `MainCtx`: Possession of a reference to this marker guarantees execution from the `main()` context.
-- `IrqCtx`: Possession of a reference to this marker  guarantees execution from an interrupt context.
+- `IrqCtx`: Possession of a reference to this marker guarantees execution from an interrupt context.
 - `InitCtx`: A special context for initializing data before the main loop has started.
 
 ## Cells
@@ -34,15 +34,12 @@ Two main cell types are provided:
 ```toml
 [dependencies]
 avr-context = "1"
-avr-device = { version = "0.7", features = [ "atmega328p", "rt" ] }
+avr-device = { version = "0.8", features = [ "atmega328p", "rt" ] }
 ```
 
 `main.rs`:
 
 ```rust
-#![no_std]
-#![no_main]
-
 use avr_context::{InitCtx, IrqCtx, MainCtx, MainCtxCell};
 
 /// This global variable can only be accessed from `main()` context.
@@ -105,12 +102,6 @@ avr_context::define_isr! {
     interrupt: TIMER1_COMPA,
     isr: timer1_compa_isr,
 }
-
-/// Rust panic handler.
-#[panic_handler]
-fn panic(_: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
 ```
 
 ## Passing data between interrupt service routine and main.
@@ -127,13 +118,13 @@ Note that `avr-context`'s `IrqCtx` does provide a `cs()` method to obtain a `Cri
 See the `avr-device` documentation for more information and examples.
 
 One other option would be to use an atomic.
-For example an atomic from the `avr-atomic` crate or from the `core` library.
+For example an atomic from the [avr-atomic](https://crates.io/crates/avr-atomic) crate or from the `core` library.
 Atomics from the `core` library are heavier on runtime and code size than `avr-atomic`, but they also have more features.
 
 ## Non-AVR target architectures
 
 This crate is currently only designed to run on `target_arch = "avr"`.
-It will compile on other architectures, but it will *not* work.
+It will compile on other architectures, but it will **not** work (it will panic).
 
 This crate will never work on architectures that are multi-processor or multi-threaded.
 
@@ -147,3 +138,5 @@ This crate is licensed under either of the following, at your option:
 
 - Apache License, Version 2.0
 - MIT license
+
+Copyright (C) 2025 - 2026 Michael Büsch

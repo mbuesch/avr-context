@@ -9,7 +9,7 @@ homepage = "https://bues.ch/"
 repository = "https://github.com/mbuesch/avr-context"
 readme = "README.md"
 categories = [ "embedded", "hardware-support", "no-std" ]
-keywords = [ "avr" ]
+keywords = [ "avr", "context", "irq", "main" ]
 
 [dependencies]
 bare-metal = "1"
