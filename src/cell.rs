@@ -10,7 +10,7 @@ use crate::{
 };
 use core::{
     cell::{Cell, UnsafeCell},
-    mem::MaybeUninit,
+    mem::{MaybeUninit, transmute_copy},
 };
 
 /// Lazy initialization of static variables.
@@ -140,6 +140,21 @@ impl<T> MainCtxCell<T> {
 }
 
 impl<T: Copy> MainCtxCell<T> {
+    /// Create a new `MainCtxCell` array with the given initial value copied into all elements.
+    pub const fn new_array<const N: usize>(inner: T) -> [Self; N] {
+        let mut ret: [MaybeUninit<Self>; N] = [const { MaybeUninit::uninit() }; N];
+        let mut i = 0;
+        while i < N {
+            ret[i].write(Self::new(inner));
+            i += 1;
+        }
+        // SAFETY:
+        // We would like to use MaybeUninit::array_assume_init, but that is not yet stable.
+        // MaybeUninit is repr(transparent), doesn't invoke Drop
+        // and all elements are initialized, so transmute_copy is safe.
+        unsafe { transmute_copy(&ret) }
+    }
+
     /// Get a copy of the inner data from a main context `MainCtx`.
     #[inline(always)]
     pub fn get(&self, m: &MainCtx<'_>) -> T {

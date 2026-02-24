@@ -131,6 +131,16 @@ mod test {
         assert_eq!(c, 44);
     }
 
+    #[test]
+    fn test_main_ctx_array() {
+        let ctx = unsafe { MainCtx::new() };
+
+        let a: [_; 3] = MainCtxCell::new_array(42_u16);
+        for cell in &a {
+            assert_eq!(cell.get(&ctx), 42);
+        }
+    }
+
     #[repr(transparent)]
     struct Dropme<T>(pub T);
 
