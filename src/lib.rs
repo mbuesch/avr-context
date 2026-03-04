@@ -135,7 +135,7 @@ mod test {
     fn test_main_ctx_array() {
         let ctx = unsafe { MainCtx::new() };
 
-        let a: [_; 3] = MainCtxCell::new_array(42_u16);
+        let a: [MainCtxCell<u16>; 3] = MainCtxCell::new_array(42_u16);
         for cell in &a {
             assert_eq!(cell.get(&ctx), 42);
         }
