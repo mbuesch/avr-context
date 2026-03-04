@@ -141,6 +141,7 @@ impl<T> MainCtxCell<T> {
 
 impl<T: Copy> MainCtxCell<T> {
     /// Create a new `MainCtxCell` array with the given initial value copied into all elements.
+    #[inline(always)]
     pub const fn new_array<const N: usize>(inner: T) -> [Self; N] {
         let mut ret: [MaybeUninit<Self>; N] = [const { MaybeUninit::uninit() }; N];
         let mut i = 0;
