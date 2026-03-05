@@ -11,7 +11,7 @@
 //!
 //! The main goal is to provide a zero-cost abstraction for safe and zero overhead data access from the main loop.
 //!
-//! This crate is built upon `Mutex` and `CriticalSection` from the `bare-metal` and `avr-device` crates.
+//! This crate is built upon `Mutex` and `CriticalSection` from the `critical-section` crate.
 //!
 //! ## Example
 //!
@@ -100,10 +100,12 @@ pub use crate::{
     context::{InitCtx, IrqCtx, MainCtx},
 };
 
-/// Re-export of `bare_metal::CriticalSection`.
-pub type CriticalSection<'cs> = bare_metal::CriticalSection<'cs>;
-/// Re-export of `bare_metal::Mutex`.
-pub type Mutex<T> = bare_metal::Mutex<T>;
+/// Re-export of `critical_section::CriticalSection`.
+pub type CriticalSection<'cs> = critical_section::CriticalSection<'cs>;
+/// Re-export of `critical_section::Mutex`.
+pub type Mutex<T> = critical_section::Mutex<T>;
+/// Re-export of `critical_section::with`.
+pub use critical_section::with as with_cs;
 
 #[cfg(test)]
 #[allow(clippy::undocumented_unsafe_blocks)]

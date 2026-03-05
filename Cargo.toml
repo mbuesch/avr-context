@@ -1,7 +1,7 @@
 [package]
 name = "avr-context"
 description = "Static checking of execution context - IRQ vs. main()"
-version = "1.0.0"
+version = "2.0.0"
 authors = [ "Michael Büsch <m@bues.ch>" ]
 edition = "2024"
 license = "MIT OR Apache-2.0"
@@ -12,7 +12,7 @@ categories = [ "embedded", "hardware-support", "no-std" ]
 keywords = [ "avr", "context", "irq", "main" ]
 
 [dependencies]
-bare-metal = "1"
+critical-section = "1"
 
 [features]
 default = [ ]
