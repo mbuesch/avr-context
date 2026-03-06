@@ -225,12 +225,12 @@ impl<'cs> MainCtx<'cs> {
 /// # Move peripherals into static variables
 ///
 /// ```ignore
-/// use avr_context::{InitCtx, MainCtx, define_main};
+/// use avr_context::{InitCtx, MainCtx, define_main, with_cs};
 ///
 /// struct MainPeripherals { }
 ///
 /// fn my_portb_function() {
-///     interrupt::free(|cs| {
+///     with_cs(|cs| {
 ///         let portb = DP_PORTB.as_ref_with_cs(cs);
 ///         // ...
 ///     });
