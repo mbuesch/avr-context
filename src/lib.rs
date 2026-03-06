@@ -9,7 +9,7 @@
 //! This crate provides context-aware cells and context markers for AVR microcontrollers.
 //! It helps to safely manage access to data from different execution contexts, such as the main loop and interrupt handlers.
 //!
-//! The main goal is to provide a zero-cost abstraction for safe and zero overhead data access from the main loop.
+//! The main goal is to provide a zero-cost abstraction for safe, zero-overhead data access from the main loop.
 //!
 //! This crate is built upon `Mutex` and `CriticalSection` from the `critical-section` crate.
 //!
@@ -43,7 +43,7 @@
 //!     PORTC: mcu::PORTC,
 //! }
 //!
-//! /// Main program loop; With interrupts enabled.
+//! /// Main program loop, with interrupts enabled.
 //! fn main_loop(c: &MainCtx<'_>, dp: MainPeripherals) -> ! {
 //!     loop {
 //!         // Put your main loop code here.
@@ -70,10 +70,10 @@
 //! avr_context::define_main! {
 //!     device: atmega328p,
 //!     main: main_loop,
-//!     enable_interrupts: true, // main_loop shall run with interrupts enabled.
+//!     enable_interrupts: true, // main_loop should run with interrupts enabled.
 //!     init: init_function(ctx, InitPeripherals { PORTB, PORTC }) -> MainPeripherals,
 //!     static_peripherals: {
-//!         static STATIC_PORTD: PORTD, // move PORTD peripheral into a static variable.
+//!         static STATIC_PORTD: PORTD, // Move the PORTD peripheral into a static variable.
 //!     },
 //! }
 //!

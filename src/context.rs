@@ -7,16 +7,16 @@
 use crate::CriticalSection;
 use core::sync::atomic::{Ordering::SeqCst, fence};
 
-/// 'main()' context marker.
+/// `main()` context marker.
 ///
-/// The possession of this marker or a reference to this marker
-/// guarantees the execution from `main()` context.
+/// Possession of this marker, or a reference to it,
+/// guarantees execution in the `main()` context.
 pub struct MainCtx<'cs>(CriticalSection<'cs>);
 
 /// Interrupt context marker.
 ///
-/// The possession of this marker or a reference to this marker
-/// guarantees the execution from interrupt context.
+/// Possession of this marker, or a reference to it,
+/// guarantees execution in interrupt context.
 pub struct IrqCtx<'cs>(CriticalSection<'cs>);
 
 macro_rules! impl_context {
@@ -85,8 +85,9 @@ impl<'cs> MainCtx<'cs> {
     }
 
     /// Get the `CriticalSection` that belongs to this context.
-    /// In the main context interrupts are enabled.
-    /// Therefore, this cs can *ONLY* be used together with `MainCtxCell`.
+    ///
+    /// In the main context, interrupts are enabled.
+    /// Therefore, this critical section can only be used together with `MainCtxCell`.
     #[inline(always)]
     pub(crate) unsafe fn cs(&self) -> CriticalSection<'cs> {
         self.0
@@ -108,8 +109,9 @@ impl<'cs> IrqCtx<'cs> {
     }
 
     /// Get the `CriticalSection` that belongs to this context.
-    /// In IRQ context interrupts are disabled.
-    /// Therefore, this cs can be used for any critical section work.
+    ///
+    /// In IRQ context, interrupts are disabled.
+    /// Therefore, this critical section can be used for any critical-section work.
     #[inline(always)]
     pub fn cs(&self) -> CriticalSection<'cs> {
         self.0
@@ -134,8 +136,9 @@ impl<'cs> InitCtx<'cs> {
     }
 
     /// Get the `CriticalSection` that belongs to this context.
-    /// In initialization context interrupts are disabled.
-    /// Therefore, this cs can be used for any critical section work.
+    ///
+    /// In initialization context, interrupts are disabled.
+    /// Therefore, this critical section can be used for any critical-section work.
     #[inline(always)]
     pub fn cs(&self) -> CriticalSection<'cs> {
         // SAFETY: [MainCtx::new_with_init] guarantees that interrupts are disabled.
@@ -153,10 +156,10 @@ impl<'cs> InitCtx<'cs> {
 
 impl<'cs> MainCtx<'cs> {
     /// Create a new `main()` context
-    /// and run an initialization function `ini_fn` under [InitCtx] context.
+    /// and run an initialization function `ini_fn` in the [InitCtx] context.
     ///
-    /// The `ini_fn` can have one argument of arbitary type
-    /// and it returns one value of arbitrary type.
+    /// The `ini_fn` can take one argument of arbitrary type
+    /// and return a value of arbitrary type.
     /// If you don't need an argument or return value, just use `()`.
     ///
     /// # Safety
@@ -184,15 +187,15 @@ impl<'cs> MainCtx<'cs> {
     }
 }
 
-/// Define a new `main()` loop together with corresponding `InitCtx` and `MainCtx`.
+/// Define a new `main()` loop together with the corresponding `InitCtx` and `MainCtx`.
 ///
-/// The init function can return a variable of arbitrary type
+/// The init function can return a value of arbitrary type
 /// that is passed as-is to the main function.
-/// This can typically be used for forwarding of peripheral elements.
+/// This is typically useful for forwarding peripheral elements.
 ///
 /// The return type of the init function and the second argument of the main function must be the same type.
 ///
-/// # Simple example use, without peripherals
+/// # Simple example, without peripherals
 ///
 /// ```
 /// use avr_context::{InitCtx, MainCtx, define_main};
@@ -347,7 +350,8 @@ macro_rules! define_main {
 }
 
 /// Define an interrupt service routine (ISR).
-/// # Example use
+///
+/// # Example
 ///
 /// ```
 /// use avr_context::{IrqCtx, define_isr};

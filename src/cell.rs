@@ -20,7 +20,7 @@ pub struct InitCtxCell<T>(UnsafeCell<MaybeUninit<T>>);
 impl<T> InitCtxCell<T> {
     /// Get an uninitialized instance of [InitCtxCell].
     ///
-    /// # SAFETY
+    /// # Safety
     ///
     /// It must be ensured that the returned instance is initialized
     /// with a call to [Self::init] during construction of the [MainCtx].

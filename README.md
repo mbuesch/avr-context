@@ -3,8 +3,8 @@
 This crate provides context-aware cells and context markers for AVR microcontrollers.
 It helps to safely manage access to data from different execution contexts, such as the main loop and interrupt handlers.
 
-The main goal is to provide a zero-cost or minimal-cost abstraction for safe and minimal overhead data access.
-The exclusive access of data from the main loop is zero-cost.
+The main goal is to provide a zero-cost or minimal-cost abstraction for safe, low-overhead data access.
+Exclusive access to data from the main loop is zero-cost.
 
 This crate is built upon `Mutex` and `CriticalSection` from the [critical-section](https://crates.io/crates/critical-section) crate.
 
@@ -61,7 +61,7 @@ fn increment_counter(c: &MainCtx<'_>) {
 
 struct MainPeripherals { }
 
-/// Main program loop; With interrupts enabled.
+/// Main program loop, with interrupts enabled.
 fn main_loop(c: &MainCtx<'_>, dp: MainPeripherals) -> ! {
     loop {
         // Put your main loop code here.
@@ -104,21 +104,21 @@ avr_context::define_isr! {
 }
 ```
 
-## Passing data between interrupt service routine and main.
+## Passing data between interrupt service routines and the main context
 
 This crate does not provide primitives for synchronizing or sending data between ISR and main contexts.
 The purpose of this crate is the opposite use case:
-If you have data that shall never be accessed from interrupt context, then put it under `MainCtxCell` protection.
+If you have data that should never be accessed from interrupt context, put it under `MainCtxCell` protection.
 
 However, communication between ISR and main context is often required of course.
 There are multiple safe ways to do that.
 
-For example an `critical-section` `Mutex` can be used for interrupt safe synchronized access.
-Note that `avr-context`'s `IrqCtx` does provide a `cs()` method to obtain a `CriticalSection` that can be used with `Mutex` to access isr/main shared variables.
+For example, a `critical-section` `Mutex` can be used for interrupt-safe synchronized access.
+Note that `avr-context`'s `IrqCtx` provides a `cs()` method to obtain a `CriticalSection` that can be used with `Mutex` to access ISR/main shared variables.
 See the `critical-section` documentation for more information and examples.
 Note that `avr-context` re-exports the necessary types and functions.
 
-One other option would be to use an atomic.
+Another option is to use an atomic type.
 For example an atomic from the [avr-atomic](https://crates.io/crates/avr-atomic) crate or from the `core` library.
 Atomics from the `core` library are heavier on runtime and code size than `avr-atomic`, but they also have more features.
 
@@ -129,7 +129,7 @@ It will compile on other architectures, but it will **not** work (it will panic)
 
 This crate will never work on architectures that are multi-processor or multi-threaded.
 
-It is possible to make this crate work on non-AVR single processor architectures.
+It is possible to make this crate work on non-AVR single-processor architectures.
 But that is currently not planned.
 If you want to work on this, please let me know by opening an issue.
 
