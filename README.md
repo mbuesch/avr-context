@@ -33,8 +33,8 @@ Two main cell types are provided:
 
 ```toml
 [dependencies]
-avr-context = "1"
-avr-device = { version = "0.8", features = [ "atmega328p", "rt" ] }
+avr-context = "2"
+avr-device = { version = "0.8", features = [ "atmega328p", "rt", "critical-section" ] }
 ```
 
 `main.rs`:
@@ -113,9 +113,10 @@ If you have data that shall never be accessed from interrupt context, then put i
 However, communication between ISR and main context is often required of course.
 There are multiple safe ways to do that.
 
-For example an `avr-device` `Mutex` can be used for interrupt safe synchronized access.
+For example an `critical-section` `Mutex` can be used for interrupt safe synchronized access.
 Note that `avr-context`'s `IrqCtx` does provide a `cs()` method to obtain a `CriticalSection` that can be used with `Mutex` to access isr/main shared variables.
-See the `avr-device` documentation for more information and examples.
+See the `critical-section` documentation for more information and examples.
+Note that `avr-context` re-exports the necessary types and functions.
 
 One other option would be to use an atomic.
 For example an atomic from the [avr-atomic](https://crates.io/crates/avr-atomic) crate or from the `core` library.
