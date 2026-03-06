@@ -6,7 +6,7 @@ It helps to safely manage access to data from different execution contexts, such
 The main goal is to provide a zero-cost or minimal-cost abstraction for safe and minimal overhead data access.
 The exclusive access of data from the main loop is zero-cost.
 
-This crate is built upon `Mutex` and `CriticalSection` from the [bare-metal](https://crates.io/crates/bare-metal) and [avr-device](https://crates.io/crates/avr-device) crates.
+This crate is built upon `Mutex` and `CriticalSection` from the [critical-section](https://crates.io/crates/critical-section) crate.
 
 ## Contexts
 
