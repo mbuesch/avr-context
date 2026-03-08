@@ -1,7 +1,7 @@
 [package]
 name = "avr-context"
 description = "Static checking of execution context - IRQ vs. main()"
-version = "2.0.0"
+version = "2.0.1"
 authors = [ "Michael Büsch <m@bues.ch>" ]
 edition = "2024"
 license = "MIT OR Apache-2.0"
